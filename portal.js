@@ -131,8 +131,6 @@ client.auth.onAuthStateChange(async (event, session) => {
   if (event === "PASSWORD_RECOVERY") {
     showPanel(resetPanel);
     showMessage("Choose a new password for your account.", "info");
-  } else if (event === "SIGNED_IN" && session?.user && !window.location.search.includes("mode=reset")) {
-    await verifyAdministrator(session.user);
   }
 });
 
