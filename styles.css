@@ -12,3 +12,20 @@
 .ecosystem{background:#f7faf7}.ecosystem .section-heading{margin-bottom:32px}.ecosystem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.ecosystem-grid figure{margin:0;background:#fff;border:1px solid var(--line)}.ecosystem-grid img{display:block;width:100%;height:230px;object-fit:cover}.ecosystem-grid figcaption{padding:15px}.ecosystem-grid figcaption strong,.ecosystem-grid figcaption span{display:block}.ecosystem-grid figcaption strong{font:700 14px var(--serif);color:var(--forest)}.ecosystem-grid figcaption span{font-size:11px;color:var(--muted);line-height:1.6;margin-top:5px}
 @media(max-width:800px){.ecosystem-grid{grid-template-columns:repeat(2,1fr)}.ecosystem-grid img{height:190px}}
 @media(max-width:460px){.ecosystem-grid{grid-template-columns:1fr 1fr;gap:9px}.ecosystem-grid img{height:145px}.ecosystem-grid figcaption{padding:10px}.ecosystem-grid figcaption strong{font-size:12px}.ecosystem-grid figcaption span{font-size:10px}}
+
+
+/* Amanzi Africa Upgrade 2.0 */
+.pillar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.pillar-card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--leaf);padding:23px 19px;min-height:250px}
+.pillar-card>span{font:italic 23px var(--serif);color:var(--gold)}
+.pillar-card h3{font:700 16px/1.45 var(--serif);color:var(--forest);margin:16px 0 10px}
+.pillar-card p{font-size:12px;line-height:1.8;color:#58665d;margin:0}
+.pillar-note{margin-top:22px;padding:18px 22px;background:var(--forest);color:#fff;font-size:13px;border-left:3px solid var(--gold)}
+.service-fee{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);margin-top:19px;padding-top:14px}
+.service-fee span{font-size:11px;color:var(--muted)}
+.service-fee strong{font:700 18px var(--serif);color:var(--forest)}
+.fee-note{font-size:12px;color:var(--muted);margin:26px 0 0;padding:14px 17px;background:#f7faf7;border-left:2px solid var(--gold)}
+.consultation-card{background:#f8fbf8}
+@media(max-width:1000px){.pillar-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.pillar-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:460px){.pillar-grid{grid-template-columns:1fr}.pillar-card{min-height:0}}
