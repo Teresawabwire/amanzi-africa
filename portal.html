@@ -50,6 +50,10 @@
         </form>
       </div>
 
+      <div id="recovery-panel" hidden><form id="recovery-form"><label for="recovery-email">Email address</label><input id="recovery-email" type="email" required autocomplete="email" placeholder="you@company.com"><button class="button button-gold portal-submit" type="submit">Send password reset link</button><button id="back-to-login" class="portal-secondary" type="button">Back to sign in</button></form></div>
+
+      <div id="reset-panel" hidden><form id="reset-form"><label for="new-password">New password</label><input id="new-password" type="password" minlength="8" required autocomplete="new-password" placeholder="At least 8 characters"><label for="confirm-password">Confirm new password</label><input id="confirm-password" type="password" minlength="8" required autocomplete="new-password" placeholder="Re-enter new password"><button class="button button-gold portal-submit" type="submit">Save new password</button></form></div>
+
       <div id="dashboard-panel" hidden>
         <p class="portal-welcome">Signed in as <strong id="user-label"></strong></p>
         <p class="portal-muted">Your administrator account has been verified. Client-facing features will appear here as they are enabled and tested.</p>
@@ -62,7 +66,7 @@
       </div>
 
       <div id="portal-message" class="portal-message" role="status" aria-live="polite" hidden></div>
-      <p class="portal-help">Need access or assistance? <a href="mailto:amanziafrica@outlook.com">Contact Amanzi Africa</a>.</p>
+      <p class="portal-help"><a href="#" id="forgot-password">Forgot your password?</a><br><br>Need access or assistance? <a href="mailto:amanziafrica@outlook.com">Contact Amanzi Africa</a>.</p>
     </section>
   </main>
 
