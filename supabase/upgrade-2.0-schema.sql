@@ -80,6 +80,30 @@ create trigger client_engagements_updated_at
 before update on public.client_engagements
 for each row execute function public.set_client_engagement_updated_at();
 
+
+-- Prevent client accounts from changing internal review fields or self-approving.
+create or replace function public.guard_client_engagement_admin_fields()
+returns trigger language plpgsql security definer set search_path = public as $
+begin
+  if not exists (
+    select 1 from public.profiles p
+    where p.id = auth.uid() and p.role = 'admin'
+  ) then
+    if new.engagement_status is distinct from old.engagement_status
+       or new.progress_step is distinct from old.progress_step
+       or new.admin_notes is distinct from old.admin_notes then
+      raise exception 'Only an Amanzi Africa administrator may change review status or internal notes.';
+    end if;
+  end if;
+  return new;
+end;
+$;
+
+drop trigger if exists client_engagement_guard_admin_fields on public.client_engagements;
+create trigger client_engagement_guard_admin_fields
+before update on public.client_engagements
+for each row execute function public.guard_client_engagement_admin_fields();
+
 -- Private document bucket. Files should be stored under: <auth-user-id>/<filename>
 insert into storage.buckets (id, name, public, file_size_limit)
 values ('client-documents', 'client-documents', false, 15728640)
