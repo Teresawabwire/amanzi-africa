@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Secure Amanzi Africa client portal sign-in.">
+  <meta name="theme-color" content="#003820">
+  <title>Client Portal | Amanzi Africa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="portal.css">
+</head>
+<body class="portal-page">
+  <div class="topline"></div>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Amanzi Africa home"><img src="assets/amanzi-logo.png" alt="Amanzi Africa leaf logo"></a>
+    <nav class="navigation" aria-label="Portal navigation">
+      <a href="index.html">Back to website</a>
+      <a class="nav-cta" href="mailto:amanziafrica@outlook.com?subject=Client%20Portal%20Support">Portal support</a>
+    </nav>
+  </header>
+
+  <main class="portal-main">
+    <section class="portal-intro">
+      <div class="section-kicker">AMANZI AFRICA • CLIENT SERVICES</div>
+      <h1>Your business journey,<br><em>clearly supported.</em></h1>
+      <p>Secure access for authorised Amanzi Africa clients and administrators. Your engagement information is handled through controlled account access.</p>
+      <div class="portal-points">
+        <span>Confidential engagement management</span>
+        <span>Clear service and payment records</span>
+        <span>Structured business support</span>
+      </div>
+    </section>
+
+    <section class="portal-card" aria-labelledby="portal-title">
+      <div class="portal-card-mark">AA</div>
+      <div class="section-kicker">SECURE ACCOUNT ACCESS</div>
+      <h2 id="portal-title">Sign in to your portal</h2>
+      <p class="portal-muted">Use the account details issued by Amanzi Africa.</p>
+
+      <div id="login-panel">
+        <form id="login-form">
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" autocomplete="username" required placeholder="you@company.com">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Enter your password">
+          <button class="button button-gold portal-submit" type="submit">Sign in securely</button>
+        </form>
+      </div>
+
+      <div id="dashboard-panel" hidden>
+        <p class="portal-welcome">Signed in as <strong id="user-label"></strong></p>
+        <p class="portal-muted">Your administrator account has been verified. Client-facing features will appear here as they are enabled and tested.</p>
+        <div class="portal-feature-list">
+          <div><strong>Engagements</strong><span>Engagement workspace is being prepared.</span></div>
+          <div><strong>Documents</strong><span>Private document access will be enabled after storage permissions are tested.</span></div>
+          <div><strong>Payments</strong><span>Payment schedules and receipts will be added after workflow validation.</span></div>
+        </div>
+        <button id="sign-out" class="button button-outline portal-submit" type="button">Sign out</button>
+      </div>
+
+      <div id="portal-message" class="portal-message" role="status" aria-live="polite" hidden></div>
+      <p class="portal-help">Need access or assistance? <a href="mailto:amanziafrica@outlook.com">Contact Amanzi Africa</a>.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer portal-footer">
+    <a href="index.html"><img src="assets/amanzi-logo.png" alt="Amanzi Africa"></a>
+    <p>SME Financing • Growth • Capital Advisory</p>
+    <span>Juhudi Leo, Imara Kesho</span>
+    <small>© <span id="year"></span> Amanzi Africa Agritech Limited. All rights reserved.</small>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="portal.js"></script>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
