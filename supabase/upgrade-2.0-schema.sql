@@ -1,7 +1,7 @@
--- Amanzi Africa Upgrade 2.0: client engagement foundation
--- Review before running in Supabase SQL Editor. Run only after confirming the existing
--- public.profiles table has columns id (uuid) and role (text).
--- This script does not expose documents publicly and does not use a service-role key.
+-- Amanzi Africa Upgrade 2.0: client engagement and private document foundation
+-- Review before running in the Supabase SQL Editor.
+-- Assumes public.profiles has id (uuid) and role (text), with authenticated users
+-- permitted to read their own profile row. Never use a service-role key in browser code.
 
 create extension if not exists pgcrypto;
 
@@ -68,7 +68,9 @@ with check (
 );
 
 create or replace function public.set_client_engagement_updated_at()
-returns trigger language plpgsql as $$
+returns trigger
+language plpgsql
+as $$
 begin
   new.updated_at = now();
   return new;
@@ -80,10 +82,13 @@ create trigger client_engagements_updated_at
 before update on public.client_engagements
 for each row execute function public.set_client_engagement_updated_at();
 
-
 -- Prevent client accounts from changing internal review fields or self-approving.
 create or replace function public.guard_client_engagement_admin_fields()
-returns trigger language plpgsql security definer set search_path = public as $
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
 begin
   if not exists (
     select 1 from public.profiles p
@@ -97,17 +102,35 @@ begin
   end if;
   return new;
 end;
-$;
+$$;
 
 drop trigger if exists client_engagement_guard_admin_fields on public.client_engagements;
 create trigger client_engagement_guard_admin_fields
 before update on public.client_engagements
 for each row execute function public.guard_client_engagement_admin_fields();
 
--- Private document bucket. Files should be stored under: <auth-user-id>/<filename>
-insert into storage.buckets (id, name, public, file_size_limit)
-values ('client-documents', 'client-documents', false, 15728640)
-on conflict (id) do update set public = false, file_size_limit = 15728640;
+-- Private bucket: client files are stored under <auth-user-id>/<filename>.
+-- 15 MB maximum; restrict uploads to common business-document formats.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'client-documents',
+  'client-documents',
+  false,
+  15728640,
+  array[
+    'application/pdf',
+    'image/jpeg',
+    'image/png',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  ]
+)
+on conflict (id) do update
+set public = false,
+    file_size_limit = 15728640,
+    allowed_mime_types = excluded.allowed_mime_types;
 
 drop policy if exists "Clients read own private documents" on storage.objects;
 create policy "Clients read own private documents"
@@ -146,5 +169,5 @@ with check (
   )
 );
 
--- No public read policy is created. Admin document access is restricted to accounts
--- whose existing profiles.role value is exactly 'admin'.
+-- No public read policy, anonymous access, or public file URLs are created.
+-- Admin access is limited to accounts whose profiles.role is exactly 'admin'.
