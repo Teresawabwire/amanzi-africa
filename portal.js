@@ -48,6 +48,16 @@ function dateLabel(value) {
     date.toLocaleDateString("en-KE", { year: "numeric", month: "short", day: "numeric" });
 }
 
+function dateTimeLabel(value) {
+  if (!value) return "—";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? escapeHTML(value) :
+    date.toLocaleString("en-KE", {
+      year: "numeric", month: "short", day: "numeric",
+      hour: "2-digit", minute: "2-digit"
+    });
+}
+
 function injectWorkspaceStyles() {
   if (document.getElementById("amanzi-workspace-styles")) return;
   const style = document.createElement("style");
@@ -319,8 +329,11 @@ function documentTable(documents) {
     <tbody>${documents.map((item) => `
       <tr><td>${escapeHTML(clientNames.get(item.client_id) || "Unmatched client")}</td>
       <td>${escapeHTML(item.document_name)}</td><td>${escapeHTML(item.document_type || "—")}</td>
-      <td>${dateLabel(item.uploaded_at)}</td>
-      <td><button type="button" class="aa-btn" data-download="${escapeHTML(item.id)}">Download</button></td></tr>`).join("")}</tbody>
+      <td>${dateTimeLabel(item.uploaded_at)}</td>
+      <td><div class="aa-actions" style="margin:0">
+        <button type="button" class="aa-btn" data-view="${escapeHTML(item.id)}">View</button>
+        <button type="button" class="aa-btn" data-download="${escapeHTML(item.id)}">Download</button>
+      </div></td></tr>`).join("")}</tbody>
   </table></div>`;
 }
 
@@ -470,6 +483,25 @@ function attachSectionEvents() {
       renderSection("documents");
     });
   }
+
+  document.querySelectorAll("[data-view]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const record = workspaceData.documents.find((item) => item.id === button.dataset.view);
+      if (!record) return;
+      button.disabled = true;
+      button.textContent = "Preparing…";
+      const { data, error } = await client.storage
+        .from(DOCUMENT_BUCKET)
+        .createSignedUrl(record.storage_path, 60);
+      button.disabled = false;
+      button.textContent = "View";
+      if (error || !data?.signedUrl) {
+        showMessage(`Unable to open this document securely: ${error?.message || "No secure link was returned."}`, "error");
+        return;
+      }
+      window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+    });
+  });
 
   document.querySelectorAll("[data-download]").forEach((button) => {
     button.addEventListener("click", async () => {
