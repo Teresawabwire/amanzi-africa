@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Start a conversation with Amanzi Africa. Tell us about your business, financing or growth priorities.">
+  <meta name="theme-color" content="#003820">
+  <title>Start Here | Amanzi Africa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="apply.css">
+</head>
+<body>
+  <div class="topline"></div>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Amanzi Africa home"><img src="assets/amanzi-logo.png" alt="Amanzi Africa leaf logo"></a>
+    <nav class="navigation" aria-label="Main navigation">
+      <a href="index.html#services">Our services</a>
+      <a href="index.html#approach">Our approach</a>
+      <a href="portal.html">Client portal</a>
+      <a class="nav-cta" href="index.html">Back to website</a>
+    </nav>
+  </header>
+
+  <main class="apply-main">
+    <section class="apply-intro">
+      <div class="section-kicker">AMANZI AFRICA • START HERE</div>
+      <h1>Let's understand<br><em>what growth means to you.</em></h1>
+      <p>Tell us a little about yourself and what you are looking to achieve. Our team will review your enquiry and contact you to discuss the most appropriate next step.</p>
+      <div class="apply-assurance">
+        <span>Confidential enquiry</span>
+        <span>No commitment at this stage</span>
+        <span>Clear next steps</span>
+      </div>
+      <div class="apply-note">
+        <strong>What happens next?</strong>
+        <p>We review your enquiry, contact you to understand your needs and, where appropriate, agree a defined scope of work before requesting supporting documents.</p>
+      </div>
+    </section>
+
+    <section class="apply-card" aria-labelledby="apply-title">
+      <div class="section-kicker">INITIAL ENQUIRY</div>
+      <h2 id="apply-title">Tell us about yourself</h2>
+      <p class="apply-subtitle">Fields marked * are required. Please do not submit bank statements, identity documents or other confidential files through this form.</p>
+
+      <form id="enquiry-form">
+        <div class="apply-grid">
+          <div class="apply-field">
+            <label for="full_name">Full name *</label>
+            <input id="full_name" name="full_name" autocomplete="name" required minlength="2" maxlength="180" placeholder="Your full name">
+          </div>
+          <div class="apply-field">
+            <label for="client_type">I am enquiring as *</label>
+            <select id="client_type" name="client_type" required>
+              <option value="">Please select</option>
+              <option value="business">A business / SME</option>
+              <option value="individual">An individual</option>
+              <option value="institution">An institution / organisation</option>
+            </select>
+          </div>
+          <div class="apply-field" id="organisation-field">
+            <label for="organisation_name">Business / organisation name</label>
+            <input id="organisation_name" name="organisation_name" maxlength="180" placeholder="Registered or trading name">
+          </div>
+          <div class="apply-field">
+            <label for="email">Email address *</label>
+            <input id="email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="name@company.com">
+          </div>
+          <div class="apply-field">
+            <label for="phone">Telephone / WhatsApp *</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" required minlength="7" maxlength="50" placeholder="+254 ...">
+          </div>
+          <div class="apply-field">
+            <label for="country">Country *</label>
+            <input id="country" name="country" autocomplete="country-name" required maxlength="100" value="Kenya">
+          </div>
+          <div class="apply-field full">
+            <label for="service_interest">What would you like support with? *</label>
+            <select id="service_interest" name="service_interest" required>
+              <option value="">Select an area of interest</option>
+              <option>Amanzi Capital Access</option>
+              <option>Amanzi CreditReady</option>
+              <option>Amanzi Working Capital Solutions</option>
+              <option>Amanzi Business Growth Advisory</option>
+              <option>Amanzi Finance Partner</option>
+              <option>Institutional / partnership enquiry</option>
+              <option>Not sure yet — I would like guidance</option>
+            </select>
+          </div>
+          <div class="apply-field full">
+            <label for="message">Briefly tell us what you are looking to achieve</label>
+            <textarea id="message" name="message" rows="4" maxlength="3000" placeholder="A short overview of your business, opportunity or support requirement..."></textarea>
+          </div>
+          <div class="apply-field honeypot" aria-hidden="true">
+            <label for="website">Leave this field empty</label>
+            <input id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+        </div>
+        <label class="apply-consent"><input type="checkbox" id="consent" required><span>I agree that Amanzi Africa may use the information provided to respond to this enquiry and contact me about the services requested. *</span></label>
+        <button class="button button-gold apply-submit" type="submit">Submit enquiry <span>→</span></button>
+        <div id="enquiry-message" class="enquiry-message" role="status" aria-live="polite" hidden></div>
+        <p class="apply-privacy">Please provide only the information needed for an initial enquiry. Supporting documents will be requested separately through an appropriate secure channel if required.</p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a href="index.html"><img src="assets/amanzi-logo.png" alt="Amanzi Africa"></a>
+    <p>SME Financing • Growth • Capital Advisory</p>
+    <span>Juhudi Leo, Imara Kesho</span>
+    <small>© <span id="year"></span> Amanzi Africa Agritech Limited. All rights reserved.</small>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="apply.js"></script>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
