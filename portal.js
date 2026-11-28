@@ -100,7 +100,8 @@ let workspaceData = {
   engagements: [],
   payments: [],
   documents: [],
-  services: []
+  services: [],
+  enquiries: []
 };
 
 let activeSection = "overview";
@@ -118,6 +119,7 @@ function workspaceShell(email) {
       </div>
       <nav class="aa-nav" aria-label="Administrator workspace">
         <button type="button" data-section="overview" class="active">Overview</button>
+        <button type="button" data-section="enquiries">Enquiries</button>
         <button type="button" data-section="clients">Clients</button>
         <button type="button" data-section="engagements">Engagements</button>
         <button type="button" data-section="documents">Documents</button>
@@ -168,10 +170,11 @@ async function loadWorkspaceData() {
     client.from("engagements").select("id,client_id,agreement_reference,agreement_status,total_service_fee,currency,created_at"),
     client.from("payment_schedule").select("id,engagement_id,installment_number,amount,due_date,payment_status,paid_at"),
     client.from("client_documents").select("id,client_id,engagement_id,document_name,storage_path,document_type,uploaded_at").order("uploaded_at", { ascending: false }),
-    client.from("services").select("id,service_name,description,standard_fee,currency,active").order("service_name")
+    client.from("services").select("id,service_name,description,standard_fee,currency,active").order("service_name"),
+    client.from("public_enquiries").select("id,full_name,client_type,organisation_name,email,phone,country,service_interest,message,status,created_at").order("created_at", { ascending: false })
   ]);
 
-  const names = ["clients", "engagements", "payments", "documents", "services"];
+  const names = ["clients", "engagements", "payments", "documents", "services", "enquiries"];
   for (let index = 0; index < results.length; index += 1) {
     const { data, error } = results[index];
     if (error) {
@@ -194,6 +197,7 @@ function renderSection(section) {
 
   const renderers = {
     overview: renderOverview,
+    enquiries: renderEnquiries,
     clients: renderClients,
     engagements: renderEngagements,
     documents: renderDocuments,
@@ -201,6 +205,7 @@ function renderSection(section) {
     services: renderServices
   };
   content.innerHTML = (renderers[section] || renderOverview)();
+  if (section === "enquiries") attachEnquiryEvents();
   attachSectionEvents();
 }
 
@@ -214,6 +219,7 @@ function renderOverview() {
   return `
     <h4 class="aa-section-title">Workspace overview</h4>
     <div class="aa-grid">
+      <div class="aa-stat"><span>New enquiries</span><strong>${workspaceData.enquiries.filter(item => item.status === "new").length}</strong></div>
       <div class="aa-stat"><span>Total clients</span><strong>${workspaceData.clients.length}</strong></div>
       <div class="aa-stat"><span>Active engagements*</span><strong>${activeEngagements}</strong></div>
       <div class="aa-stat"><span>Document records</span><strong>${workspaceData.documents.length}</strong></div>
@@ -246,6 +252,36 @@ function clientTable(clients) {
           <td>${dateLabel(item.created_at)}</td>
         </tr>`).join("")}</tbody>
     </table></div>
+  `;
+}
+
+function renderEnquiries() {
+  const enquiries = workspaceData.enquiries;
+  if (!enquiries.length) {
+    return '<h4 class="aa-section-title">Prospective client enquiries</h4><div class="aa-empty">No public enquiries have been received yet. New submissions from the START HERE form will appear here.</div>';
+  }
+  return `
+    <h4 class="aa-section-title">Prospective client enquiries (${enquiries.length})</h4>
+    <p class="aa-note">These are initial enquiries, not yet approved or converted client records. Review each enquiry and update its follow-up status below.</p>
+    <div class="aa-panel"><div class="aa-table-wrap"><table class="aa-table">
+      <thead><tr><th>Received</th><th>Contact</th><th>Type / organisation</th><th>Interest</th><th>Contact details</th><th>Message</th><th>Follow-up status</th></tr></thead>
+      <tbody>${enquiries.map(item => `
+        <tr>
+          <td>${dateTimeLabel(item.created_at)}</td>
+          <td><strong>${escapeHTML(item.full_name)}</strong></td>
+          <td>${escapeHTML(item.client_type)}<br>${escapeHTML(item.organisation_name || "—")}<br>${escapeHTML(item.country || "")}</td>
+          <td>${escapeHTML(item.service_interest)}</td>
+          <td><a href="mailto:${escapeHTML(item.email)}">${escapeHTML(item.email)}</a><br>${escapeHTML(item.phone)}</td>
+          <td>${escapeHTML(item.message || "—")}</td>
+          <td><select data-enquiry-status="${escapeHTML(item.id)}" aria-label="Update enquiry status">
+            <option value="new" ${item.status === "new" ? "selected" : ""}>New</option>
+            <option value="contacted" ${item.status === "contacted" ? "selected" : ""}>Contacted</option>
+            <option value="qualified" ${item.status === "qualified" ? "selected" : ""}>Qualified</option>
+            <option value="converted" ${item.status === "converted" ? "selected" : ""}>Converted</option>
+            <option value="closed" ${item.status === "closed" ? "selected" : ""}>Closed</option>
+          </select></td>
+        </tr>`).join("")}</tbody>
+    </table></div></div>
   `;
 }
 
@@ -373,6 +409,26 @@ function renderServices() {
         <td><span class="aa-status">${item.active ? "Active" : "Inactive"}</span></td></tr>`).join("")}</tbody>
     </table></div></div>
   `;
+}
+
+function attachEnquiryEvents() {
+  document.querySelectorAll("[data-enquiry-status]").forEach((select) => {
+    select.addEventListener("change", async () => {
+      const enquiryId = select.dataset.enquiryStatus;
+      const nextStatus = select.value;
+      select.disabled = true;
+      const { error } = await client.from("public_enquiries").update({ status: nextStatus }).eq("id", enquiryId);
+      select.disabled = false;
+      if (error) {
+        showMessage(`Unable to update enquiry status: ${error.message}`, "error");
+        await loadWorkspaceData();
+        return;
+      }
+      const record = workspaceData.enquiries.find(item => item.id === enquiryId);
+      if (record) record.status = nextStatus;
+      showMessage("Enquiry follow-up status updated.", "success");
+    });
+  });
 }
 
 function attachSectionEvents() {
